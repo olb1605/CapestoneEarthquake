@@ -1,0 +1,122 @@
+---
+title: "CapestoneEarthquake"
+author: "Olga Vassilieva"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This package contains functions to visualise earthquakes from a dataset obtained
+from the U.S. National Oceanographic and Atmospheric Administration (NOAA).
+The functions are:
+- data cleaning functions: eq_clean_data() and eq_location_clean
+- geoms to visualise earthquakes magnitude and number of death by selected countries on the timeline: geom_timeline() and geom_timeline_label()
+- functions mapping the earthquakes and label them eq_map() and eq_create_label()
+
+## Obtain data
+
+Download data from NOAA website, save it and load:
+
+```{r, eval=FALSE}
+library(readr)
+
+NOAA_raw_data<-system.file("extdata","signif.txt",package="CapestoneEarthquake")
+earthquake_track <- readr::read_tsv(NOAA_raw_data, col_names = TRUE)
+as.data.frame(earthquake_track)
+
+```
+This function returns a dataframe "earthquake_track"
+
+## Data cleaning
+
+Before running visualisations clean the data using function eq_data_clean(). This function creates the data column by uniting the year, month, day and converts it 
+to the Date class. LATITUDE and LONGITUDE columns are converted to numeric class and some other data (number of death, magnitude) are converting to numeric.
+
+```{r, eval=FALSE}
+library(dplyr)
+library(magrittr)
+ 
+earthquake_track_clean<-eq_clean_data(earthquake_track)
+
+```
+
+Next cleaning function eq_location_clean strips out the country name (including the colon) from the LOCATION_NAME column and converts names to title case (as opposed to all caps)
+
+```{r, eval=FALSE}
+library(dplyr)
+library(stringr)
+library(magrittr)
+ 
+earthquake_track_clean<-eq_location_clean(earthquake_track_clean)
+
+```
+
+
+## Visualisation on the plot
+
+Make a plot to visualize the times, the magnitudes and the number of deaths associated to earthquakes within certain countries, use the geom_timeline  with the `ggplot` function: 
+
+
+```{r, eval=FALSE}
+library(ggplot2)
+library(grid)
+
+earthquake_track_clean %>%
+  dplyr::filter(COUNTRY %in% c('JAPAN', 'IRAN',YEAR > 2010)) %>%
+  ggplot() +
+  geom_timeline(aes(x = DATE, y = COUNTRY, color = TOTAL_DEATHS,
+                    size = EQ_PRIMARY)) +
+  scale_size_continuous(name = 'Richter scale value') +
+  scale_color_continuous(name = '# of Deaths')+
+  theme(legend.position="bottom", legend.box="horizontal")
+
+```
+
+In order to add labels to the plot use the geom_timelinelabel. It adds annotations to the earthquake data and an option to subset the n_max largest earthquakes by magnitude:
+
+```{r, eval=FALSE}
+library(ggplot2)
+library(grid)
+library(dplyr)
+
+earthquake_track_clean%>%
+  dplyr::filter(COUNTRY %in% c("JAPAN","IRAN","PERU") & lubridate::year(DATE) >= 2016) %>%
+  ggplot() +
+  geom_timeline(aes(x=DATE,y=COUNTRY,color=TOTAL_DEATHS,size=EQ_PRIMARY)) +
+  geom_timeline_label(aes(label=LOCATION_NAME),n_max=3)+
+  scale_size_continuous(name = 'Richter scale value') +
+  scale_color_continuous(name = '# of Deaths')+
+  theme(legend.position="bottom", legend.box="horizontal")
+
+```
+
+## Visualisation on the map
+
+eq_map function helps to visualize earthquake epicentres of the certain region for the selected period. The column from the data can be chosen for annotation that will be in pop-up windows:
+
+```{r, eval=FALSE}
+eq_clean_data(earthquake_track) %>%
+  dplyr::filter(COUNTRY == "MEXICO" & lubridate::year(DATE) >= 2000) %>% 
+  eq_map(annot_col = "DATE")
+```
+
+To add more information to annotations use eq_create_lable function together with eq_map. This function adds the Location, Total deaths, and Magnitude of the earthquakes:
+
+```{r, eval=FALSE}
+eq_clean_data(earthquake_track) %>%
+  dplyr::filter(COUNTRY == "IRAN" & lubridate::year(DATE) >= 2016) %>% 
+  dplyr::mutate(popup_text = eq_create_label(.)) %>% 
+  eq_map(annot_col = "popup_text")
+```
+
+
+
+
+
+
+
+
+

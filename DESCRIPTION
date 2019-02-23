@@ -1,0 +1,14 @@
+Package: CapestoneEarthquake
+Title: NOAA earthquakes data ploting and visualization on the map
+Version: 0.1.0
+Author: Olga Vassilieva
+Maintainer: Olga Vassilieva <olb1605@gmail.com>
+Description: This package can be used to visualize NOAA earthquakes. It cleans the raw data, build plot based on earthquakes magnitude on the specific time line. The functions allow to visualize earthquakes on the map with annotations in the pop-up windows.
+Depends: R (>= 3.4.2) 
+Imports: dplyr, magrittr, stringr, ggplot2, grid, leaflet, readr, lubridate, tidyverse, testthat, chron
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
