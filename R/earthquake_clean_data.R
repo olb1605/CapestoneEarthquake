@@ -1,7 +1,7 @@
 ####
-if(getRversion()>='2.15.1')
-  utils::globalVariables(c("LOCATION_NAME","I_D","YEAR","MONTH","DAY","LATITUDE","LONGITUDE",
-                           "EQ_PRIMARY","COUNTRY","STATE","TOTAL_DEATHS","DATE","YEAR4"))
+#if(getRversion()>='2.15.1')
+#  utils::globalVariables(c("LOCATION_NAME","I_D","YEAR","MONTH","DAY","LATITUDE","LONGITUDE",
+#                           "EQ_PRIMARY","COUNTRY","STATE","TOTAL_DEATHS","DATE","YEAR4"))
 #' @title Function to cleans NOAA earthquake and localisation data
 #'
 #'
