@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/olb1605/CapestoneEarthquake.svg?branch=master)](https://travis-ci.org/olb1605/CapestoneEarthquake)
+
 CapestoneEarthquake
 -------------------
 
